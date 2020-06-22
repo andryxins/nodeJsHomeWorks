@@ -1,0 +1,19 @@
+{
+  "name": "nodejshomeworks",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andryxins/nodeJsHomeWorks.git"
+  },
+  "author": "Andrew Khairetdinov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andryxins/nodeJsHomeWorks/issues"
+  },
+  "homepage": "https://github.com/andryxins/nodeJsHomeWorks#readme"
+}

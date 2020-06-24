@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,12 @@
   "bugs": {
     "url": "https://github.com/andryxins/nodeJsHomeWorks/issues"
   },
-  "homepage": "https://github.com/andryxins/nodeJsHomeWorks#readme"
+  "homepage": "https://github.com/andryxins/nodeJsHomeWorks#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "shortid": "^2.2.15",
+    "yargs": "^15.3.1"
+  }
 }

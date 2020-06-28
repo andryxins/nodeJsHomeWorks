@@ -8,8 +8,16 @@ contactsRoutes.get('/contacts/:id', ContactsControllers.getContactsById);
 
 contactsRoutes.post(
   '/contacts',
-  ContactsControllers.validateNewUser,
-  ContactsControllers.createNewUser,
+  ContactsControllers.validateNewContact,
+  ContactsControllers.createNewContact,
 );
+
+contactsRoutes.patch(
+  '/contacts/:id',
+  ContactsControllers.validateUpdateContact,
+  ContactsControllers.updateContact,
+);
+
+contactsRoutes.delete('/contacts/:id', ContactsControllers.deleteContact);
 
 module.exports = contactsRoutes;

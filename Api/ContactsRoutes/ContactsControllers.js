@@ -7,8 +7,8 @@ class ContactsController {
       const contacts = await contactsModel.listContacts();
 
       return res.status(200).json(contacts);
-    } catch (e) {
-      res.status(500).json({ message: e.message });
+    } catch (err) {
+      return this.errorHandler(res, err);
     }
   };
 
@@ -22,22 +22,53 @@ class ContactsController {
       }
 
       return res.status(200).json(targetContact);
-    } catch (e) {
-      res.status(500).json({ message: e.message });
+    } catch (err) {
+      return this.errorHandler(res, err);
     }
   };
 
-  createNewUser = async (req, res, next) => {
+  createNewContact = async (req, res, next) => {
     try {
       const newContact = await contactsModel.addContact(req.body);
 
       return res.status(201).json(newContact);
-    } catch (e) {
-      res.status(500).json({ message: e.message });
+    } catch (err) {
+      return this.errorHandler(res, err);
     }
   };
 
-  validateNewUser = async (req, res, next) => {
+  updateContact = async (req, res, next) => {
+    try {
+      const updatedContact = await contactsModel.updateContact(
+        req.params.id,
+        req.body,
+      );
+
+      if (!updatedContact) {
+        return res.status(404).json({ message: 'Not Found' });
+      }
+
+      return res.status(200).json(updatedContact);
+    } catch (err) {
+      return this.errorHandler(res, err);
+    }
+  };
+
+  deleteContact = async (req, res, next) => {
+    try {
+      const deleteStatus = await contactsModel.removeContact(req.params.id);
+
+      if (!deleteStatus) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+
+      return res.status(200).json({ message: 'contact deleted' });
+    } catch (err) {
+      return this.errorHandler(res, err);
+    }
+  };
+
+  validateNewContact = async (req, res, next) => {
     try {
       const schema = Joi.object({
         name: Joi.string().required(),
@@ -51,6 +82,30 @@ class ContactsController {
     } catch (e) {
       res.status(400).json({ message: e.message });
     }
+  };
+
+  validateUpdateContact = async (req, res, next) => {
+    try {
+      if (!Object.keys(req.body).length) {
+        throw new Error('missing fields');
+      }
+
+      const schema = Joi.object({
+        name: Joi.string(),
+        email: Joi.string(),
+        phone: Joi.string(),
+      });
+
+      await schema.validateAsync(req.body);
+
+      next();
+    } catch (e) {
+      res.status(400).json({ message: e.message });
+    }
+  };
+
+  errorHandler = (res, err) => {
+    return res.status(500).send({ message: err.message });
   };
 }
 

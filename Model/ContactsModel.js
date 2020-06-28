@@ -1,7 +1,6 @@
 const path = require('path');
 const fs = require('fs');
 const { promises: fsPromises } = fs;
-const { v4: uuidv4 } = require('uuid');
 
 const contactsPath = path.join(process.cwd() + '/db/contacts.json');
 
@@ -13,54 +12,67 @@ class ContactsModel {
   };
 
   getContactById = async contactId => {
-    const contactsList = await fsPromises.readFile(contactsPath, 'utf-8');
-    const parsedContactsList = JSON.parse(contactsList);
-    const targetContact = parsedContactsList.find(
-      user => user.id === contactId,
-    );
+    const contactsList = await this.listContacts();
+    const targetContact = contactsList.find(user => user.id === contactId);
 
     return targetContact;
   };
 
   removeContact = async contactId => {
-    try {
-      const contactsList = await fsPromises.readFile(contactsPath, 'utf-8');
-      const filteredContactsList = JSON.parse(contactsList).filter(
-        contact => contact.id !== contactId,
-      );
+    const contactsList = await this.listContacts();
 
-      await fsPromises.writeFile(
-        contactsPath,
-        JSON.stringify(filteredContactsList),
-      );
+    const targetContactIdx = contactsList.findIndex(
+      contact => contact.id === contactId,
+    );
 
-      return console.log(
-        `Contact with id ${contactId} was successfully deleted`,
-      );
-    } catch (e) {
-      console.log(e);
+    if (targetContactIdx === -1) {
+      return false;
     }
+
+    contactsList.splice(targetContactIdx, 1);
+
+    await fsPromises.writeFile(contactsPath, JSON.stringify(contactsList));
+
+    return true;
   };
 
   addContact = async candidateContact => {
-    const contactsList = await fsPromises.readFile(contactsPath, 'utf-8');
+    const contactsList = await this.listContacts();
 
     const newContact = {
       ...candidateContact,
-      id: uuidv4(),
+      id: Math.floor(Math.random() * 10000) + '',
     };
-
-    const contactsListWithNewContact = [
-      ...JSON.parse(contactsList),
-      newContact,
-    ];
 
     await fsPromises.writeFile(
       contactsPath,
-      JSON.stringify(contactsListWithNewContact),
+      JSON.stringify([...contactsList, newContact]),
     );
 
     return newContact;
+  };
+
+  updateContact = async (id, updatedFields) => {
+    const contactsList = await this.listContacts();
+
+    const targetContactIdx = contactsList.findIndex(
+      contact => contact.id === id,
+    );
+
+    if (targetContactIdx === -1) {
+      return null;
+    }
+
+    const updatedContact = {
+      ...contactsList[targetContactIdx],
+      ...updatedFields,
+    };
+
+    contactsList[targetContactIdx] = updatedContact;
+
+    await fsPromises.writeFile(contactsPath, JSON.stringify(contactsList));
+
+    return updatedContact;
   };
 }
 

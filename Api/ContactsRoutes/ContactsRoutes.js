@@ -7,15 +7,15 @@ contactsRoutes.get('/contacts', ContactsControllers.getAllContacts);
 contactsRoutes.get('/contacts/:id', ContactsControllers.getContactsById);
 
 contactsRoutes.post(
-    '/contacts',
-    ContactsControllers.validateNewContact,
-    ContactsControllers.createNewContact,
+  '/contacts',
+  ContactsControllers.validateNewContact,
+  ContactsControllers.createNewContact,
 );
 
 contactsRoutes.patch(
-    '/contacts/:id',
-    ContactsControllers.validateUpdateContact,
-    ContactsControllers.updateContact,
+  '/contacts/:id',
+  ContactsControllers.validateUpdateContact,
+  ContactsControllers.updateContact,
 );
 
 contactsRoutes.delete('/contacts/:id', ContactsControllers.deleteContact);

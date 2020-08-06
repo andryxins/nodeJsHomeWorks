@@ -4,7 +4,16 @@ const Contacts = require('../../Model/Contacts');
 class ContactsController {
   getAllContacts = async (req, res, next) => {
     try {
-      const contacts = await Contacts.find();
+      let contacts;
+
+      if (req.query && req.query.sub) {
+        contacts = await Contacts.paginate(
+          { subscription: req.query.sub },
+          { ...req.query },
+        );
+      } else {
+        contacts = await Contacts.paginate({}, { ...req.query });
+      }
 
       return res.status(200).json(contacts);
     } catch (err) {
@@ -69,6 +78,22 @@ class ContactsController {
       return res.status(200).json({ message: 'contact deleted' });
     } catch (err) {
       return this.errorHandler(res, err);
+    }
+  };
+
+  validateParamsOnGetAllContacts = async (req, res, next) => {
+    try {
+      const schema = Joi.object({
+        page: Joi.string(),
+        limit: Joi.string(),
+        sub: Joi.string(),
+      });
+
+      await schema.validateAsync(req.query);
+
+      next();
+    } catch (e) {
+      return res.status(400).json({ message: e.message });
     }
   };
 

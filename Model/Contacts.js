@@ -1,4 +1,5 @@
 const { Schema, model, set } = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 // next line fix this problem https://github.com/Automattic/mongoose/issues/6890
 set('useCreateIndex', true);
@@ -24,6 +25,7 @@ const contact = new Schema({
   },
   subscription: {
     type: String,
+    enum: ['free', 'pro', 'premium'],
     default: 'free',
   },
   token: {
@@ -31,5 +33,7 @@ const contact = new Schema({
     default: '',
   },
 });
+
+contact.plugin(mongoosePaginate);
 
 module.exports = model('contact', contact);

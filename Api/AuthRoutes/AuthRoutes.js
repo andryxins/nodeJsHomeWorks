@@ -16,6 +16,6 @@ authRoutes.post(
   AuthController.loginUser,
 );
 
-authRoutes.post('/logout', checkAuth, AuthController.logout);
+authRoutes.patch('/logout', checkAuth, AuthController.logout);
 
 module.exports = authRoutes;

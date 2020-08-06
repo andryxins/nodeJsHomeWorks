@@ -61,9 +61,13 @@ class AuthController {
   };
 
   logout = async (req, res, next) => {
-    await Users.updateOne({ _id: req.user._id }, { token: '' });
+    try {
+      await Users.updateOne({ _id: req.user._id }, { token: '' });
 
-    return res.sendStatus(204);
+      return res.sendStatus(204);
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
   };
 
   checkIsEmailUnique = async (req, res, next) => {

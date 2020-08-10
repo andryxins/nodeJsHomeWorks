@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
 const contactsRoutes = require('./Api/ContactsRoutes/ContactsRoutes');
+const authRoutes = require('./Api/AuthRoutes/AuthRoutes');
+const usersRoutes = require('./Api/UsersRoutes/UsersRoutes');
 
 const PORT = process.env.PORT || 8080;
 
@@ -21,6 +23,8 @@ class Server {
 
   initRoutes() {
     this.server.use('/api', contactsRoutes);
+    this.server.use('/auth', authRoutes);
+    this.server.use('/users', usersRoutes);
   }
 
   initServer() {

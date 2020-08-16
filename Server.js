@@ -16,6 +16,7 @@ class Server {
   initMiddlewares() {
     this.server.use(express.json({ limit: '25kb' }));
     this.server.use(cors({ origin: 'http://localhost:3000' }));
+    this.server.use(express.static('public'));
     this.server.use(
       morgan(':method :url :status :res[content-length] - :response-time ms'),
     );

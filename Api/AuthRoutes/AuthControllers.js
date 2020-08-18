@@ -1,7 +1,12 @@
+const path = require('path');
+const fs = require('fs');
+const { promises: fsPromises } = fs;
 const Joi = require('@hapi/joi');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const AvatarGenerator = require('avatar-generator');
 const Users = require('../../Model/Users');
+const createAvatarUrl = require('../../lib/createAvatarUrl');
 
 class AuthController {
   constructor() {
@@ -10,19 +15,23 @@ class AuthController {
 
   createNewUser = async (req, res, next) => {
     try {
-      const { password } = req.body;
+      const { password, email } = req.body;
 
       const passwordHash = await bcrypt.hash(password, this.saltRounds);
+
+      const avatarURL = await this.createAvatar(email);
 
       const createdUser = await Users.create({
         ...req.body,
         password: passwordHash,
+        avatarURL,
       });
 
       return res.status(201).json({
         user: {
           email: createdUser.email,
           subscription: createdUser.subscription,
+          avatarURL: createdUser.avatarURL,
         },
       });
     } catch (err) {
@@ -82,6 +91,22 @@ class AuthController {
     } catch (err) {
       return res.status(500).send({ message: err.message });
     }
+  };
+
+  createAvatar = async email => {
+    const avatar = new AvatarGenerator();
+    const variant = 'male';
+    const image = await avatar.generate(email, variant);
+
+    const fileName = `${email}.png`;
+    await image.png().toFile(`tmp/${fileName}`);
+
+    await fsPromises.rename(
+      path.join(__dirname, '../../', 'tmp', fileName),
+      path.join(__dirname, '../../', 'public/images', fileName),
+    );
+
+    return createAvatarUrl(fileName);
   };
 
   validateLoginFields = async (req, res, next) => {
